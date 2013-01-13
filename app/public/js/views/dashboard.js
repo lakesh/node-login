@@ -22,6 +22,50 @@ $(document).ready(function() {
     });
 	});
 	
+	$('.happy').click(function() {
+		$.ajax({
+      url: '/feedback',
+      type: 'POST',
+      data: {"feedback":"1"},
+      success: function (result) {
+        alert("Your vote has been successfully posted");
+      }
+    });
+	});
+	
+	$('.sad').click(function() {
+		$.ajax({
+      url: '/feedback',
+      type: 'POST',
+      data: {"feedback":"2"},
+      success: function (result) {
+        alert("Your vote has been successfully posted");
+      }
+    });
+	});
+	
+	$('.angry').click(function() {
+		$.ajax({
+      url: '/feedback',
+      type: 'POST',
+      data: {"feedback":"3"},
+      success: function (result) {
+        alert("Your vote has been successfully posted");
+      }
+    });
+	});
+	
+	$('.sleepy').click(function() {
+		$.ajax({
+      url: '/feedback',
+      type: 'POST',
+      data: {"feedback":"4"},
+      success: function (result) {
+        alert("Your vote has been successfully posted");
+      }
+    });
+	});
+	
 	var socket = io.connect('http://local.host:3000'); 
   
 	//var data = {"start":1336594920000,"end":1336680960000,"step":120000,"names":["Stats_count2xx"],"values":[[15820.0101840488, 15899.7253668067, 16047.4476816121, 16225.0631734631, 16321.0429563369, 16477.289219996, 16372.5034462091, 16420.2024254868, 16499.3156905815, 16422.1844610347]]};
