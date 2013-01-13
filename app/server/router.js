@@ -3,6 +3,7 @@ var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
 
+var mongodb = require('mongodb');
 module.exports = function(app) {
 
 // main login page //
@@ -37,6 +38,41 @@ module.exports = function(app) {
 				res.send(o, 200);
 			}
 		});
+	});
+	
+	app.get('/dashboard', function(req, res) {
+	    console.log(req.loggedIn);
+	    if (req.session.user == null){
+	      console.log('I am not in');
+	      // if user is not logged-in redirect back to login page //
+        res.redirect('/');
+      } else{
+			  res.render('dashboard', {
+				  locals: {
+					  title : 'Dashboard',
+					  countries : CT,
+					  udata : req.session.user
+				  }
+			  });
+	    }
+	});
+	
+	app.post('/feedback', function(req,res) {
+    var server = new mongodb.Server('localhost',27017, {auto_reconnect: true}, {safe:true});
+		var db = new mongodb.Db('clicker', server);
+		
+    db.open(function(err, db) {
+			if(!err) {
+				db.collection('feedback', function(err, collection) {
+					var currentTime = new Date().getTime();
+					var feedback = {value:req.param('feedback'), datetime:currentTime};	
+					collection.insert(feedback);
+					db.close();
+				});
+			}      
+		});
+		res.send('ok', 200);
+		
 	});
 	
 // logged-in user homepage //

@@ -1,5 +1,4 @@
-
-module.exports = function(app, exp) {
+module.exports = function(app, exp, everyauth) {
 
 	app.configure(function(){
 		app.set('views', app.root + '/app/server/views');
@@ -8,6 +7,7 @@ module.exports = function(app, exp) {
 		app.use(exp.bodyParser());
 		app.use(exp.cookieParser());
 		app.use(exp.session({ secret: 'super-duper-secret-secret' }));
+		app.use(everyauth.middleware(app));
 		app.use(exp.methodOverride());
 		app.use(require('stylus').middleware({ src: app.root + '/app/public' }));
 		app.use(exp.static(app.root + '/app/server'));

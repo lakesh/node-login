@@ -1,0 +1,26 @@
+div.navbar.navbar-fixed-top
+    div.navbar-inner
+        div.container-fluid
+            ul#global-nav.nav.pull-left
+                a(href='#').brand Control Panel
+            button#btn-logout.btn.btn-primary
+                i.icon-lock.icon-white
+                | Sign Out
+#votebox(align="center")
+    div.voting
+        input(type="button").positive
+        input(type="button").negative
+    h2 Real time stats(What others think about it)
+    #graph1.aGraph
+        
+include modals/alert
+include modals/confirm
+
+script(src='/vendor/socket.io.js')	
+script(src='/vendor/d3.v2.js')
+script(src='/vendor/line-graph.js')
+script(src='/vendor/jquery.min.js')
+script(src='/vendor/jquery.form.js')
+script(src='/vendor/bootstrap-modal.js')
+script(src='/js/views/dashboard.js')
+script(src='/js/controllers/dashboardController.js')
