@@ -17,7 +17,7 @@ module.exports = function(app) {
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
 				    req.session.user = o;
-					res.redirect('/home');
+					res.redirect('/dashboard');
 				}	else{
 					res.render('login', { locals: { title: 'Hello - Please Login To Your Account' }});
 				}
@@ -27,6 +27,7 @@ module.exports = function(app) {
 	
 	app.post('/', function(req, res){
 		AM.manualLogin(req.param('user'), req.param('pass'), function(e, o){
+		  console.log('Manual login');
 			if (!o){
 				res.send(e, 400);
 			}	else{

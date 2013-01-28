@@ -1,12 +1,17 @@
 $(document).ready(function() {
 	var dc = new DashboardController();
+  happy_count = 0;
+  sad_count = 0;
+  angry_count = 0;
+  sleepy_count = 0;
+
 	$('.positive').click(function() {
 		$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"1"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
@@ -17,107 +22,155 @@ $(document).ready(function() {
       type: 'POST',
       data: {"feedback":"0"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
 	
 	$('.happy').click(function() {
+    $(this).attr('class','happy_pressed');
 		$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"1"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
 	
-	$('.sad').click(function() {
+	$('.sad').click(function() { 
+    $(this).attr('class','sad_pressed');
 		$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"2"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
 	
 	$('.angry').click(function() {
+    $(this).attr('class','angry_pressed');
 		$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"3"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
 	
 	$('.sleepy').click(function() {
+    $(this).attr('class','sleepy_pressed');
 		$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"4"},
       success: function (result) {
-        alert("Your vote has been successfully posted");
+        //alert("Your vote has been successfully posted");
       }
     });
 	});
 	
 	var socket = io.connect('http://local.host:3000'); 
-  
-	//var data = {"start":1336594920000,"end":1336680960000,"step":120000,"names":["Stats_count2xx"],"values":[[15820.0101840488, 15899.7253668067, 16047.4476816121, 16225.0631734631, 16321.0429563369, 16477.289219996, 16372.5034462091, 16420.2024254868, 16499.3156905815, 16422.1844610347]]};
-	var data = {};
-	var dataA = {"start":1336594920000,"end":1336680960000,"step":120000,"names":["Stats_count2xx"],"values":[[15625.6826207297],[411.161376855185],[22.3887353437241],[22.3334186252455]]};
-	
-	var l1;
+  	
 	socket.on('initial', function (stats) {
-		data = stats.stats;
-		dataA.start = data.start;
-		dataA.end = data.end;
-		dataA.step = data.step;
-		l1 = new LineGraph({containerId: 'graph1', data: data});
+    happy_count = stats.stats[0];
+    sad_count = stats.stats[1];
+    angry_count = stats.stats[2];
+    sleepy_count = stats.stats[3];   
+    $('span.happy').html(happy_count);         
+    $('span.sad').html(sad_count);         
+    $('span.angry').html(angry_count);         
+    $('span.sleepy').html(sleepy_count); 
+    drawChart();                  
 	});
 
-	/* 
- * If running inside bl.ocks.org we want to resize the iframe to fit both graphs
- */
- if(parent.document.getElementsByTagName("iframe")[0]) {
-	 parent.document.getElementsByTagName("iframe")[0].setAttribute('style', 'height: 650px !important');
- }
+  setInterval(function() {
+  	socket.emit('update');
+  }, 2000);
+
+  socket.on('newstats', function(stats) {
+    happy_count = stats.stats[0];
+    sad_count = stats.stats[1];
+    angry_count = stats.stats[2];
+    sleepy_count = stats.stats[3];
+    $('span.happy').html(happy_count);         
+    $('span.sad').html(sad_count);         
+    $('span.angry').html(angry_count);         
+    $('span.sleepy').html(sleepy_count);
+    drawChart();
+  });
 
 
-//var dataA = {"start":1336681080000,"end":1336681080000,"step":120000,"names":["Stats"],"values":[[15625.6826207297],[411.161376855185]]};
-
-
- // create graph now that we've added presentation config
-setInterval(function() {
-	socket.emit('update');
-}, 2000);
-
-socket.on('newstats', function(stats) {
-	var newData = [];
-	data.values.forEach(function(dataSeries, index) {
-		// take the first value and move it to the end
-		// and capture the value we're moving so we can send it to the graph as an update
-		dataSeries.shift();
-		dataSeries.push(stats.stats[0]);
-		// put this value in newData as an array with 1 value
-		newData[index] = [stats.stats[0]];
-	})
-
-	// we will reuse dataA each time
-	dataA.values = newData;
-	// increment time 1 step
-	dataA.start = dataA.start + dataA.step;
-	dataA.end = dataA.end + dataA.step; 
-				
-	l1.slideData(dataA);
-	
 });
 
-	
-});
+setTimeout(function()
+{
+  google.load('visualization', '1', {'callback':'', 'packages':['imagechart']})
+  //google.setOnLoadCallback(drawChart);
+}, 1);
+
+
+
+function drawChart() {
+
+  total = happy_count + sad_count + angry_count + sleepy_count;
+  happy_norm = Math.round(happy_count / total * 100);
+  sad_norm = Math.round(sad_count / total * 100);
+  angry_norm = Math.round(angry_count / total * 100);
+  sleepy_norm = 100 - (happy_norm + sad_norm + angry_norm);
+
+	var data = google.visualization.arrayToDataTable([
+    ['Name', 'Percentage', 'Smokes'],
+    ['Happy', happy_norm, true],
+    ['Sad', sad_norm, true],
+    ['Angry', angry_norm, false],
+    ['Sleepy', sleepy_norm, true]
+  ]);
+
+  var options = {};
+
+  // 'bhg' is a horizontal grouped bar chart in the Google Chart API.
+  // The grouping is irrelevant here since there is only one numeric column.
+  options.cht = 'bhg';
+
+  // Add a data range.
+  var min = 0;
+  var max = 100;
+  options.chds = min + ',' + max;
+
+  // Now add data point labels at the end of each bar.
+
+  // Add meters suffix to the labels.
+  var meters = 'N** %';
+
+  // Draw labels in pink.
+  var color = 'ff3399';
+
+  // Google Chart API needs to know which column to draw the labels on.
+  // Here we have one labels column and one data column.
+  // The Chart API doesn't see the label column.  From its point of view,
+  // the data column is column 0.
+  var index = 0;
+
+  // -1 tells Google Chart API to draw a label on all bars.
+  var allbars = -1;
+
+  // 10 pixels font size for the labels.
+  var fontSize = 10;
+
+  // Priority is not so important here, but Google Chart API requires it.
+  var priority = 0;
+
+  options.chm = [meters, color, index, allbars, fontSize, priority].join(',');
+
+  // Create and draw the visualization.
+  new google.visualization.ImageChart(document.getElementById('chart_div')).
+    draw(data, options);
+
+}
 

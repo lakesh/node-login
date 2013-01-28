@@ -70,8 +70,10 @@ io.sockets.on('connection', function (socket) {
 	var startTime = currentTime - (10*60*1000);
 	step = 60000;
 	var values = new Array();
-	var positives = new Array();
-	var negatives = new Array();
+	var happy = new Array();
+	var sad = new Array();
+	var angry = new Array();
+	var sleepy = new Array();
 	
 	var server1 = new mongodb.Server('localhost',27017, {auto_reconnect: true}, {safe:true});
 	var db1 = new mongodb.Db('clicker', server1);	
@@ -87,17 +89,17 @@ io.sockets.on('connection', function (socket) {
 					queries.push((function(j){
 						return function(callback) {
 							collection.find(
-								{value:1},
+								{value:"1"},
 								{created_on: 
 									{       
 										$gte:startTime + (j*60*1000 - 30*1000),
 										$lt: startTime + (j*60*1000 + 30*1000)
 									}
 								},
-								function(err_positive, result_positive) {
-									result_positive.count(function(err, count){
+								function(err_positive, result_happy) {
+									result_happy.count(function(err, count){
 										console.log("Total matches: " + count);
-										positives[j] = count;          
+										happy[j] = count;          
 										callback();
 									});
 								}
@@ -108,23 +110,65 @@ io.sockets.on('connection', function (socket) {
 					queries.push((function(j){
 						return function(callback) {
 							collection.find(
-								{value:0},
+								{value:"2"},
 								{created_on: 
 									{
 										$gte:startTime + (j*60*1000 - 30*1000),
 										$lt: startTime + (j*60*1000 + 30*1000)
 									}
 								},
-								function(err_negative, result_negative) {
-									result_negative.count(function(err, count){
+								function(err_negative, result_sad) {
+									result_sad.count(function(err, count){
 										console.log("Total matches: " + count);
-										negatives[j] = count;
+										sad[j] = count;
 										callback();
 									});
 								}   
 							);
 						}
-					})(i));  
+					})(i)); 
+					queries.push((function(j){
+						return function(callback) {
+							collection.find(
+								{value:"3"},
+								{created_on: 
+									{       
+										$gte:startTime + (j*60*1000 - 30*1000),
+										$lt: startTime + (j*60*1000 + 30*1000)
+									}
+								},
+								function(err_positive, result_angry) {
+									result_angry.count(function(err, count){
+										console.log("Total matches: " + count);
+										angry[j] = count;          
+										callback();
+									});
+								}
+				
+							);
+						}
+					})(i)); 
+					queries.push((function(j){
+						return function(callback) {
+							collection.find(
+								{value:"4"},
+								{created_on: 
+									{       
+										$gte:startTime + (j*60*1000 - 30*1000),
+										$lt: startTime + (j*60*1000 + 30*1000)
+									}
+								},
+								function(err_positive, result_sleepy) {
+									result_sleepy.count(function(err, count){
+										console.log("Total matches: " + count);
+										sleepy[j] = count;          
+										callback();
+									});
+								}
+				
+							);
+						}
+					})(i));
 				}
 				
 				// Now execute the queries:
@@ -133,14 +177,14 @@ io.sockets.on('connection', function (socket) {
 					// So we have access to the completed positives and negatives:
 				
 					// For example, we can dump the arrays in Firebug:
-					for (var i=0;i <END; i++) {
-						values[i] = positives[i] - negatives[i];
-					}
+					values[0] = happy[0];
+					values[1] = sad[0];
+					values[2] = angry[0];
+					values[3] = sleepy[0];
 					
 					console.log(values);
-					var stats = {"start":startTime,"end":currentTime,"step":step,"names":["Stats"],"values":[[5,7,4,8,3,9,19,25,2,36]]};
 					db1.close();
-					socket.emit('initial', { stats: stats }); 
+					socket.emit('initial', { stats: values }); 
 				});
 			});
 
@@ -165,47 +209,91 @@ io.sockets.on('connection', function (socket) {
 					// Build up queries:
 					for (var i=0;i <1; i++) {
 						queries.push((function(j){
-							return function(callback) {
-								collection.find(
-									{value:"1"},
-									{datetime: 
-										{       
-											$gte:currentTime + (j*60*1000 - 30*1000),
-											$lt: currentTime + (j*60*1000 + 30*1000)
-										}
-									},
-									function(err_positive, result_positive) {
-										result_positive.count(function(err, count){
-											console.log("Total matches: " + count);
-											positives[j] = count;          
-											callback();
-										});
-									}
-					
-								);
-							}
-						})(i));
-						
-						queries.push((function(j){
-							return function(callback) {
-								collection.find(
-									{value:"0"},
-									{datetime: 
-										{
-											$gte:startTime + (j*60*1000 - 30*1000),
-											$lt: startTime + (j*60*1000 + 30*1000)
-										}
-									},
-									function(err_negative, result_negative) {
-										result_negative.count(function(err, count){
-											console.log("Total matches: " + count);
-											negatives[j] = count;
-											callback();
-										});
-									}   
-								);
-							}
-						})(i));  
+  						return function(callback) {
+  							collection.find(
+  								{value:"1"},
+  								{created_on: 
+  									{       
+  										$gte:startTime + (j*60*1000 - 30*1000),
+  										$lt: startTime + (j*60*1000 + 30*1000)
+  									}
+  								},
+  								function(err_positive, result_happy) {
+  									result_happy.count(function(err, count){
+  										console.log("Total matches: " + count);
+  										happy[j] = count;          
+  										callback();
+  									});
+  								}
+
+  							);
+  						}
+  					})(i));
+  					
+  					queries.push((function(j){
+  						return function(callback) {
+  							collection.find(
+  								{value:"2"},
+  								{created_on: 
+  									{
+  										$gte:startTime + (j*60*1000 - 30*1000),
+  										$lt: startTime + (j*60*1000 + 30*1000)
+  									}
+  								},
+  								function(err_negative, result_sad) {
+  									result_sad.count(function(err, count){
+  										console.log("Total matches: " + count);
+  										sad[j] = count;
+  										callback();
+  									});
+  								}   
+  							);
+  						}
+  					})(i)); 
+  					
+  					queries.push((function(j){
+  						return function(callback) {
+  							collection.find(
+  								{value:"3"},
+  								{created_on: 
+  									{       
+  										$gte:startTime + (j*60*1000 - 30*1000),
+  										$lt: startTime + (j*60*1000 + 30*1000)
+  									}
+  								},
+  								function(err_positive, result_angry) {
+  									result_angry.count(function(err, count){
+  										console.log("Total matches: " + count);
+  										angry[j] = count;          
+  										callback();
+  									});
+  								}
+
+  							);
+  						}
+  					})(i)); 
+  					
+  					queries.push((function(j){
+  						return function(callback) {
+  							collection.find(
+  								{value:"4"},
+  								{created_on: 
+  									{       
+  										$gte:startTime + (j*60*1000 - 30*1000),
+  										$lt: startTime + (j*60*1000 + 30*1000)
+  									}
+  								},
+  								function(err_positive, result_sleepy) {
+  									result_sleepy.count(function(err, count){
+  										console.log("Total matches: " + count);
+  										sleepy[j] = count;          
+  										callback();
+  									});
+  								}
+
+  							);
+  						}
+  					})(i));
 					}
 					
 					// Now execute the queries:
@@ -214,9 +302,10 @@ io.sockets.on('connection', function (socket) {
 						// So we have access to the completed positives and negatives:
 					
 						// For example, we can dump the arrays in Firebug:
-						for (var i=0;i <END; i++) {
-							values[i] = positives[i] - negatives[i];
-						}
+  					values[0] = happy[0];
+  					values[1] = sad[0];
+  					values[2] = angry[0];
+  					values[3] = sleepy[0];
 						
 						console.log(values);
 						db.close();

@@ -13,7 +13,15 @@ div.navbar.navbar-fixed-top
         input(type="button").angry
         input(type="button").sleepy
     h2 Real time stats(What others think about it)
-    #graph1.aGraph
+
+    div.stats
+        span.happy
+        span.sad
+        span.angry
+        span.sleepy
+
+    div#chart_div
+        
         
 include modals/alert
 include modals/confirm
@@ -26,3 +34,4 @@ script(src='/vendor/jquery.form.js')
 script(src='/vendor/bootstrap-modal.js')
 script(src='/js/views/dashboard.js')
 script(src='/js/controllers/dashboardController.js')
+script(src='http://www.google.com/jsapi')
