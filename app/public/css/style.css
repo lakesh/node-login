@@ -180,6 +180,8 @@ input.happy_pressed {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
+  position: relative;
+  top: 3px;
 }
 input.sad_pressed {
   background-image: url("/img/sad.png");
@@ -196,6 +198,8 @@ input.sad_pressed {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
+  position: relative;
+  top: 3px;
 }
 input.angry_pressed {
   background-image: url("/img/angry.png");
@@ -212,6 +216,8 @@ input.angry_pressed {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
+  position: relative;
+  top: 3px;
 }
 input.sleepy_pressed {
   background-image: url("/img/sleepy.png");
@@ -228,6 +234,8 @@ input.sleepy_pressed {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
+  position: relative;
+  top: 3px;
 }
 input.happy {
   background-image: url("/img/happy.png");
@@ -292,6 +300,29 @@ input.sleepy {
   box-shadow: 0px 3px 5px #000;
   -moz-box-shadow: 0px 3px 5px #000;
   -webkit-box-shadow: 0px 3px 5px #000;
+}
+input.reset {
+  background-image: url("/img/reset.jpg");
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  width: 64px;
+  height: 64px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  box-shadow: 0px 3px 5px #000;
+  -moz-box-shadow: 0px 3px 5px #000;
+  -webkit-box-shadow: 0px 3px 5px #000;
+}
+input.reset:active {
+  position: relative;
+  top: 3px;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
 }
 span.happy {
   margin: 20px;

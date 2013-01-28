@@ -1,9 +1,112 @@
+happy_count = 0;
+sad_count = 0;
+angry_count = 0;
+sleepy_count = 0;
+
+happy_set = false;
+sad_set = false;
+angry_set = false;
+sleepy_set = false;
+
+happy_send_count = 0;
+sad_send_count = 0;
+angry_send_count = 0;
+sleepy_send_count = 0;
+
+threshold = 10;
+
+function reset_all() {
+  happy_set = false;
+  sad_set = false;
+  angry_set = false;
+  sleepy_set = false;
+
+  happy_send_count = 0;
+  sad_send_count = 0;
+  angry_send_count = 0;
+  sleepy_send_count = 0;
+}
+
+function css_reset_all() {
+  $('.happy_pressed').attr('class','happy');
+  $('.sad_pressed').attr('class','sad');
+  $('.angry_pressed').attr('class','angry');
+  $('.sleepy_pressed').attr('class','sleepy');
+}
+
+
+function send_happy() {
+  $.ajax({
+    url: '/feedback',
+    type: 'POST',
+    data: {"feedback":"1"},
+    success: function (result) {
+    }
+  });
+  if(happy_set == true && happy_send_count < threshold) {
+    setTimeout(send_happy, 1000);
+    happy_send_count = happy_send_count + 1;
+  } else {
+    happy_send_count = 0;  
+    $('.happy_pressed').attr('class','happy');  
+  }
+}
+
+function send_sad() {
+  $.ajax({
+    url: '/feedback',
+    type: 'POST',
+    data: {"feedback":"2"},
+    success: function (result) {
+    }
+  });
+  if(sad_set == true  && sad_send_count < threshold) {
+    setTimeout(send_sad, 1000);
+    sad_send_count = sad_send_count + 1;
+  } else {
+    sad_send_count = 0;  
+    $('.sad_pressed').attr('class','sad');  
+  }
+}
+
+function send_angry() {
+  $.ajax({
+    url: '/feedback',
+    type: 'POST',
+    data: {"feedback":"3"},
+    success: function (result) {
+    }
+  });
+  if(angry_set == true  && angry_send_count < threshold) {
+    setTimeout(send_angry, 1000);
+    angry_send_count = angry_send_count + 1;
+  } else {
+    angry_send_count = 0;  
+    $('.angry_pressed').attr('class','angry');  
+  }
+}
+
+function send_sleepy() {
+  $.ajax({
+    url: '/feedback',
+    type: 'POST',
+    data: {"feedback":"4"},
+    success: function (result) {
+    }
+  });
+  if(sleepy_set == true && sleepy_send_count < threshold) {
+    setTimeout(send_sleepy, 1000);
+    sleepy_send_count = sleepy_send_count + 1;
+  } else {
+    sleepy_send_count = 0;  
+    $('.sleepy_pressed').attr('class','sleepy');  
+  }
+}
+
+
 $(document).ready(function() {
 	var dc = new DashboardController();
-  happy_count = 0;
-  sad_count = 0;
-  angry_count = 0;
-  sleepy_count = 0;
+
 
 	$('.positive').click(function() {
 		$.ajax({
@@ -28,51 +131,72 @@ $(document).ready(function() {
 	});
 	
 	$('.happy').click(function() {
+    reset_all();
+    css_reset_all();
     $(this).attr('class','happy_pressed');
-		$.ajax({
+    happy_set = true;
+    setTimeout(send_happy, 1000);
+		/*$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"1"},
       success: function (result) {
         //alert("Your vote has been successfully posted");
       }
-    });
+    });*/
 	});
 	
 	$('.sad').click(function() { 
+    reset_all();
+    css_reset_all();
     $(this).attr('class','sad_pressed');
-		$.ajax({
+    sad_set = true;
+    setTimeout(send_sad, 1000);
+		/*$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"2"},
       success: function (result) {
         //alert("Your vote has been successfully posted");
       }
-    });
+    });*/
 	});
 	
 	$('.angry').click(function() {
+    reset_all();
+    css_reset_all();
     $(this).attr('class','angry_pressed');
-		$.ajax({
+    angry_set = true;
+    setTimeout(send_angry, 1000);
+		/*$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"3"},
       success: function (result) {
         //alert("Your vote has been successfully posted");
       }
-    });
+    });*/
 	});
 	
 	$('.sleepy').click(function() {
+    reset_all();
+    css_reset_all();
     $(this).attr('class','sleepy_pressed');
-		$.ajax({
+    sleepy_set = true;
+    setTimeout(send_sleepy, 1000);
+		/*$.ajax({
       url: '/feedback',
       type: 'POST',
       data: {"feedback":"4"},
       success: function (result) {
         //alert("Your vote has been successfully posted");
       }
-    });
+    });*/
+	});
+
+	$('.reset').click(function() {
+    reset_all();
+    css_reset_all();
 	});
 	
 	var socket = io.connect('http://local.host:3000'); 
